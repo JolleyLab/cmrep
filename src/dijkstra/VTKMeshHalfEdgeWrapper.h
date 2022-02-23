@@ -1,7 +1,7 @@
 #ifndef _VTKMeshHalfEdgeWrapper_h_
 #define _VTKMeshHalfEdgeWrapper_h_
 
-#include "vtkPolyData.h"
+#include <vtkPolyData.h>
 
 class VTKMeshHalfEdgeWrapper
 {
@@ -23,7 +23,7 @@ public:
     for(unsigned int iVtx=0; iVtx < nVertices; iVtx++)
       {
       // Get the number of cells for this point
-      unsigned short nCells;
+      vtkIdType nCells;
       vtkIdType *xDummy = NULL;
       xMesh->GetPointCells(iVtx, nCells, xDummy);
 
@@ -51,7 +51,14 @@ public:
     for(unsigned int iCell = 0; iCell < (unsigned int) xMesh->GetNumberOfCells(); iCell++)
       {
       // Get the points for this cell
-      vtkIdType nPoints, *xPoints;
+      vtkIdType nPoints;
+
+      #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+            const vtkIdType *xPoints;
+      #else
+            vtkIdType *xPoints;
+      #endif
+
       xMesh->GetCellPoints(iCell, nPoints, xPoints);
 
       // Walk around the list of points
